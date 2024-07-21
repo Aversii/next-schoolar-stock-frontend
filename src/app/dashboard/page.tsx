@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { Container, Header, Sidebar, MainContent, Table, Button, ButtonBin, Modal, ModalContent, ModalActions, EditModalContent } from "./styles";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
-// Define the type for Material
 interface Material {
   id: number;
   name: string;
@@ -13,7 +12,6 @@ interface Material {
   unitMeasurement: string;
 }
 
-// Custom Hook for Authentication Check
 const useAuthRedirect = (redirectTo = '/') => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -37,6 +35,7 @@ const useAuthRedirect = (redirectTo = '/') => {
 export default function Dashboard() {
   const router = useRouter();
   const [materials, setMaterials] = useState<Material[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState("");
   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null); // For deletion
   const [editMaterial, setEditMaterial] = useState<Material | null>(null); // For editing
@@ -92,7 +91,6 @@ export default function Dashboard() {
         }
       });
 
-      // Refresh the materials list
       setMaterials(materials.filter((material) => material.id !== id));
       setShowModal(false);
     } catch (error) {
@@ -124,7 +122,6 @@ export default function Dashboard() {
         }
       });
 
-      // Refresh the materials list
       setMaterials(materials.map((material) =>
         material.id === editMaterial.id ? editMaterial : material
       ));
@@ -165,6 +162,10 @@ export default function Dashboard() {
 
   if (loading) return <p>Loading...</p>;
 
+  const filteredMaterials = materials.filter((material) =>
+    material.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <Container>
       <Header>
@@ -186,6 +187,13 @@ export default function Dashboard() {
         <MainContent>
           {error && <p className="text-danger">{error}</p>}
           <h2>MATERIAIS</h2>
+          <input
+            type="text"
+            placeholder="Buscar material"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ marginBottom: '20px', padding: '10px', width: '100%' }}
+          />
           <Table>
             <thead>
               <tr>
@@ -196,7 +204,7 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody>
-              {materials.map((material) => (
+              {filteredMaterials.map((material) => (
                 <tr key={material.id}>
                   <td>{material.name}</td>
                   <td>{material.quantity}</td>
