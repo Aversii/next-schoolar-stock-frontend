@@ -353,67 +353,45 @@ export default function Reabastecimento() {
         </MainContent>
       </div>
 
-      {/* Modal para exclusão */}
-      {showModal && (
+      {showModal && selectedMaterial && (
         <Modal>
           <ModalContent>
-            <p>Tem certeza de que deseja excluir o material?</p>
+            <h3>Confirmar Exclusão</h3>
+            <p>Tem certeza de que deseja excluir o material "{selectedMaterial.name}"?</p>
             <ModalActions>
-              <Button onClick={() => handleDelete(selectedMaterial?.id!)}>
-                Sim
-              </Button>
-              <Button onClick={closeModal}>Não</Button>
+              <Button onClick={() => selectedMaterial && handleDelete(selectedMaterial.id)}>Confirmar</Button>
+              <ButtonBin onClick={closeModal}>Cancelar</ButtonBin>
             </ModalActions>
           </ModalContent>
         </Modal>
       )}
 
-      {/* Modal para edição */}
-      {showEditModal && (
+      {showEditModal && editMaterial && (
         <Modal>
           <EditModalContent>
             <h3>Editar Material</h3>
-            {editMaterial && (
-              <div>
-                <label>Nome</label>
-                <input
-                  type="text"
-                  value={editMaterial.name}
-                  onChange={(e) =>
-                    setEditMaterial({
-                      ...editMaterial,
-                      name: e.target.value,
-                    })
-                  }
-                />
-                <label>Quantidade</label>
-                <input
-                  type="number"
-                  value={editMaterial.quantity}
-                  onChange={(e) =>
-                    setEditMaterial({
-                      ...editMaterial,
-                      quantity: parseInt(e.target.value),
-                    })
-                  }
-                />
-                <label>Unidade de Medida</label>
-                <input
-                  type="text"
-                  value={editMaterial.unitMeasurement}
-                  onChange={(e) =>
-                    setEditMaterial({
-                      ...editMaterial,
-                      unitMeasurement: e.target.value,
-                    })
-                  }
-                />
-                <ModalActions>
-                  <Button onClick={handleEdit}>Salvar</Button>
-                  <Button onClick={closeEditModal}>Cancelar</Button>
-                </ModalActions>
-              </div>
-            )}
+            <input
+              type="text"
+              value={editMaterial.name}
+              onChange={(e) => setEditMaterial({ ...editMaterial, name: e.target.value })}
+              placeholder="Nome"
+            />
+            <input
+              type="number"
+              value={editMaterial.quantity}
+              onChange={(e) => setEditMaterial({ ...editMaterial, quantity: Number(e.target.value) })}
+              placeholder="Quantidade"
+            />
+            <input
+              type="text"
+              value={editMaterial.unitMeasurement}
+              onChange={(e) => setEditMaterial({ ...editMaterial, unitMeasurement: e.target.value })}
+              placeholder="Unidade de Medida"
+            />
+            <ModalActions>
+              <Button onClick={handleEdit}>Salvar</Button>
+              <ButtonBin onClick={closeEditModal}>Cancelar</ButtonBin>
+            </ModalActions>
           </EditModalContent>
         </Modal>
       )}
