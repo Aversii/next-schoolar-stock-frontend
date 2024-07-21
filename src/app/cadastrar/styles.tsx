@@ -26,7 +26,7 @@ export const Sidebar = styled.aside`
   min-height: 100%;
 
   ul {
-    list-style-type: none;
+    list-style-type: none; 
     padding: 0;
   }
 
@@ -51,9 +51,13 @@ export const Sidebar = styled.aside`
 
 export const MainContent = styled.main`
   flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 20px;
   height: 90vh;
   overflow-y: auto;
+
   h2 {
     text-align: center;
     color: #ffffff;
@@ -65,14 +69,13 @@ export const Table = styled.table`
   border-collapse: collapse;
   color: #ffffff;
 
-  th,
-  td {
+  th, td {
     border: 1px solid #333;
     padding: 10px;
     text-align: left;
   }
 
-  tr :last-child {
+  tr:last-child {
     display: flex;
     justify-content: center;
     gap: 40px;
@@ -96,9 +99,7 @@ export const Button = styled.button`
   border-radius: 5px;
 
   &:hover {
-    :last-child {
-      color: #00fa05;
-    }
+    color: #00FA05;
   }
 `;
 
@@ -111,29 +112,6 @@ export const ButtonBin = styled.button`
   border-radius: 5px;
 
   &:hover {
-    :last-child {
-      color: #dc143c;
-    }
-  }
-`;
-
-export const ButtonDownload = styled.button`
-  background-color: #444;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  cursor: pointer;
-  border-radius: 5px;
-  margin-left: 50%;
-  margin-top: 5vh;
-
-  &:hover {
-    background-color: #339CFF;
-    p {
-      color: black;
-    }
-    &:last-child {
-      color: #180ed1;
-    }
+    color: #dc143c;
   }
 `;

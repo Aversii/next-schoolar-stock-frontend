@@ -101,10 +101,9 @@ export const Button = styled.button`
   
 
   &:hover {
-    background-color: #00FA05;
 
     :last-child{
-    color: black;
+    color: #00FA05;
   }
   }
 
@@ -120,11 +119,106 @@ export const ButtonBin = styled.button`
   border-radius: 5px;
   
   &:hover {
-    background-color: #dc143c;
-
     :last-child{
-    color: black;
+    color: #dc143c;
   }
   }
 
 `;
+
+export const Modal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+export const ModalContent = styled.div`
+  background: #0f0f0f;
+  color: #ffffff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+  h3 {
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    color: #61dafb;
+  }
+
+  p {
+    margin-bottom: 20px;
+  }
+`;
+
+export const ModalActions = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+
+  button {
+    flex: 1;
+    margin: 0 5px;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1em;
+    color: #ffffff;
+    transition: background-color 0.3s;
+  }
+
+  :first-child{
+    &:hover {
+      background-color: #00FA05;
+      color:black
+    }
+  }
+
+  :last-child{
+    &:hover {
+      background-color: #b80027;
+      color:black
+
+    }
+  }
+`;
+
+export const EditModalContent = styled.div`
+  background: #0f0f0f;
+  color: #ffffff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 400px;  
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+  h3 {
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    color: #61dafb;
+  }
+
+  p {
+    margin-bottom: 20px;
+  }
+
+  input, select {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background: #1c1c1c;
+    color: #ffffff;
+  }
+`;
+

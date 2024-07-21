@@ -2,8 +2,16 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from 'next/navigation';
-import { Container, Header, Sidebar, MainContent, Table, Button, ButtonBin } from "./styles";
-import { FaEdit, FaTrashAlt, FaFilter } from "react-icons/fa";
+import { Container, Header, Sidebar, MainContent, Table, Button, ButtonBin, Modal, ModalContent, ModalActions, EditModalContent } from "./styles";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
+
+// Define the type for Material
+interface Material {
+  id: number;
+  name: string;
+  quantity: number;
+  unitMeasurement: string;
+}
 
 // Custom Hook for Authentication Check
 const useAuthRedirect = (redirectTo = '/') => {
@@ -28,8 +36,12 @@ const useAuthRedirect = (redirectTo = '/') => {
 
 export default function Dashboard() {
   const router = useRouter();
-  const [materials, setMaterials] = useState([]);
+  const [materials, setMaterials] = useState<Material[]>([]);
   const [error, setError] = useState("");
+  const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(null); // For deletion
+  const [editMaterial, setEditMaterial] = useState<Material | null>(null); // For editing
+  const [showModal, setShowModal] = useState(false); // For showing delete modal
+  const [showEditModal, setShowEditModal] = useState(false); // For showing edit modal
   const loading = useAuthRedirect('/');
 
   useEffect(() => {
@@ -66,6 +78,91 @@ export default function Dashboard() {
     fetchMaterials();
   }, [loading, router]);
 
+  const handleDelete = async (id: number) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        router.push('/');
+        return;
+      }
+
+      await axios.delete(`http://localhost:8000/materials/${id}`, {
+        headers: {
+          Authorization: `${token}`
+        }
+      });
+
+      // Refresh the materials list
+      setMaterials(materials.filter((material) => material.id !== id));
+      setShowModal(false);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          setError(error.response.data.Error || "Erro desconhecido. Tente novamente.");
+        } else {
+          setError("Erro ao conectar com o servidor. Verifique sua conexão e tente novamente.");
+        }
+      } else {
+        setError("Ocorreu um erro inesperado. Tente novamente.");
+      }
+    }
+  };
+
+  const handleEdit = async () => {
+    if (!editMaterial) return;
+
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        router.push('/');
+        return;
+      }
+
+      await axios.patch(`http://localhost:8000/materials/${editMaterial.id}`, editMaterial, {
+        headers: {
+          Authorization: `${token}`
+        }
+      });
+
+      // Refresh the materials list
+      setMaterials(materials.map((material) =>
+        material.id === editMaterial.id ? editMaterial : material
+      ));
+      setShowEditModal(false);
+      window.location.reload();
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          setError(error.response.data.Error || "Erro desconhecido. Tente novamente.");
+        } else {
+          setError("Erro ao conectar com o servidor. Verifique sua conexão e tente novamente.");
+        }
+      } else {
+        setError("Ocorreu um erro inesperado. Tente novamente.");
+      }
+    }
+  };
+
+  const openModal = (material: Material) => {
+    setSelectedMaterial(material);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setSelectedMaterial(null);
+    setShowModal(false);
+  };
+
+  const openEditModal = (material: Material) => {
+    setEditMaterial(material);
+    setShowEditModal(true);
+  };
+
+  const closeEditModal = () => {
+    setEditMaterial(null);
+    setShowEditModal(false);
+  };
+
   if (loading) return <p>Loading...</p>;
 
   return (
@@ -80,9 +177,10 @@ export default function Dashboard() {
       <div style={{ display: 'flex', height: '90vh' }}>
         <Sidebar>
           <ul>
-            <li onClick={()=>router.push("/dashboard")}><a href="#!">Home</a></li>
-            <li onClick={()=>router.push("/reabastecimento")} ><a href="#!">Reabastecimento</a></li>
-            <li><a href="#!">Configurações</a></li>
+            <li onClick={() => router.push("/dashboard")}><a href="#!">Home</a></li>
+            <li onClick={() => router.push("/reabastecimento")} ><a href="#!">Reabastecimento</a></li>
+            <li onClick={() => router.push("/cadastrar")} ><a href="#!">Cadastrar</a></li>
+            <li onClick={() => router.push("/configuracoes")} ><a href="#!">Configurações</a></li>
           </ul>
         </Sidebar>
         <MainContent>
@@ -91,23 +189,23 @@ export default function Dashboard() {
           <Table>
             <thead>
               <tr>
-                <th>Nome </th>
+                <th>Nome</th>
                 <th>Quantidade</th>
                 <th>Unidade</th>
                 <th>Ações</th>
               </tr>
             </thead>
             <tbody>
-              {materials.map((material: any) => (
+              {materials.map((material) => (
                 <tr key={material.id}>
                   <td>{material.name}</td>
                   <td>{material.quantity}</td>
                   <td>{material.unitMeasurement}</td>
                   <td>
-                    <Button onClick={() => {/* Logic to edit quantity */}}>
+                    <Button onClick={() => openEditModal(material)}>
                       <FaEdit style={{ color: 'black' }} />
                     </Button>
-                    <ButtonBin style={{ color: 'black' }} onClick={() => {/* Logic to delete item */}}>
+                    <ButtonBin style={{ color: 'black' }} onClick={() => openModal(material)}>
                       <FaTrashAlt />
                     </ButtonBin>
                   </td>
@@ -117,6 +215,49 @@ export default function Dashboard() {
           </Table>
         </MainContent>
       </div>
+
+      {showModal && selectedMaterial && (
+        <Modal>
+          <ModalContent>
+            <h3>Confirmar Exclusão</h3>
+            <p>Tem certeza de que deseja excluir o material "{selectedMaterial.name}"?</p>
+            <ModalActions>
+              <Button onClick={() => selectedMaterial && handleDelete(selectedMaterial.id)}>Confirmar</Button>
+              <ButtonBin onClick={closeModal}>Cancelar</ButtonBin>
+            </ModalActions>
+          </ModalContent>
+        </Modal>
+      )}
+
+      {showEditModal && editMaterial && (
+        <Modal>
+          <EditModalContent>
+            <h3>Editar Material</h3>
+            <input
+              type="text"
+              value={editMaterial.name}
+              onChange={(e) => setEditMaterial({ ...editMaterial, name: e.target.value })}
+              placeholder="Nome"
+            />
+            <input
+              type="number"
+              value={editMaterial.quantity}
+              onChange={(e) => setEditMaterial({ ...editMaterial, quantity: Number(e.target.value) })}
+              placeholder="Quantidade"
+            />
+            <input
+              type="text"
+              value={editMaterial.unitMeasurement}
+              onChange={(e) => setEditMaterial({ ...editMaterial, unitMeasurement: e.target.value })}
+              placeholder="Unidade de Medida"
+            />
+            <ModalActions>
+              <Button onClick={handleEdit}>Salvar</Button>
+              <ButtonBin onClick={closeEditModal}>Cancelar</ButtonBin>
+            </ModalActions>
+          </EditModalContent>
+        </Modal>
+      )}
     </Container>
   );
 }
