@@ -54,7 +54,7 @@ export default function Dashboard() {
           return;
         }
 
-        const response = await axios.get("http://localhost:8000/materials", {
+        const response = await axios.get("https://typescript-scholar-stock.vercel.app/materials", {
           headers: {
             Authorization: `${token}`
           }
@@ -85,7 +85,7 @@ export default function Dashboard() {
         return;
       }
 
-      await axios.delete(`http://localhost:8000/materials/${id}`, {
+      await axios.delete(`https://typescript-scholar-stock.vercel.app/materials/${id}`, {
         headers: {
           Authorization: `${token}`
         }
@@ -116,7 +116,7 @@ export default function Dashboard() {
         return;
       }
 
-      await axios.patch(`http://localhost:8000/materials/${editMaterial.id}`, editMaterial, {
+      await axios.patch(`https://typescript-scholar-stock.vercel.app/${editMaterial.id}`, editMaterial, {
         headers: {
           Authorization: `${token}`
         }

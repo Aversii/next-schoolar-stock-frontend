@@ -4,7 +4,7 @@ import axios from "axios";
 import { useRouter } from 'next/navigation';
 import { Card, Title, Subtitle, InputWrapper, Input, Label } from "../styles/LoginStyles";
 import Layout from "../components/components";
-import { Button } from "./styles"; // Importe o botão a partir do arquivo correto
+import { Button } from "./styles";
 
 export default function Cadastro() {
   const router = useRouter();
@@ -28,7 +28,7 @@ export default function Cadastro() {
     try {
       setError("");
       setSuccessMessage("");
-      const response = await axios.post("http://localhost:8000/material/create", {
+      const response = await axios.post("https://typescript-scholar-stock.vercel.app/material/create", {
         name: nome,
         quantity: parseInt(quantidade),
         unitMeasurement: unidade

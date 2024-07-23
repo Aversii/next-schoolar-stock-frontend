@@ -16,7 +16,7 @@ export default function Home() {
     try {
       setError("");
       setSuccessMessage("");
-      const response = await axios.post("http://localhost:8000/login", {
+      const response = await axios.post("https://typescript-scholar-stock.vercel.app/login", {
         email,
         password
       });
