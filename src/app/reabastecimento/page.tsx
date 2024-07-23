@@ -75,7 +75,7 @@ export default function Reabastecimento() {
         }
 
         const response = await axios.get(
-          "http://localhost:8000/replenishment",
+          "https://typescript-scholar-stock.vercel.app/replenishment",
           {
             headers: {
               Authorization: `${token}`,
@@ -112,13 +112,12 @@ export default function Reabastecimento() {
         return;
       }
 
-      await axios.delete(`http://localhost:8000/materials/${id}`, {
+      await axios.delete(`https://typescript-scholar-stock.vercel.app/${id}`, {
         headers: {
           Authorization: `${token}`,
         },
       });
 
-      // Refresh the materials list
       setMaterials(materials.filter((material) => material.id !== id));
       setShowModal(false);
     } catch (error) {
@@ -150,7 +149,7 @@ export default function Reabastecimento() {
 
       // Enviar solicitação PATCH para atualizar o material
       await axios.patch(
-        `http://localhost:8000/materials/${editMaterial.id}`,
+        `https://typescript-scholar-stock.vercel.app/${editMaterial.id}`,
         editMaterial,
         {
           headers: {
@@ -159,9 +158,7 @@ export default function Reabastecimento() {
         }
       );
 
-      // Atualizar o estado da lista de materiais para refletir a edição
 
-      // Fechar o modal de edição
       setShowEditModal(false);
       window.location.reload();
     } catch (error) {
@@ -182,7 +179,6 @@ export default function Reabastecimento() {
   };
 
   const generateWordDocument = () => {
-    // Função para formatar a lista de materiais
     const formatMaterialList = (materials: Material[]) => {
       return materials.map((material) => {
         return new Paragraph({
